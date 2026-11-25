@@ -1,5 +1,7 @@
 node_modules/
 .vercel/
+.output/
+.pages/
 .grok/
 attachments/
 dist/

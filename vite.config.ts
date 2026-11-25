@@ -142,10 +142,17 @@ function authPopupPlugin(): Plugin {
   };
 }
 
+// GitHub Pages (project site) serves the app under /<repo>/ — the Pages deploy
+// sets VITE_BASE_PATH=/zero-a-heros-oracle and DEPLOY_TARGET=github-pages
+// (see .github/workflows/deploy-pages.yml). Everywhere else the app lives at /.
+const pagesBase = (process.env.VITE_BASE_PATH ?? "").replace(/\/$/, "");
+const isPages = process.env.DEPLOY_TARGET === "github-pages";
+
 // `0.0.0.0:8080` is the live-preview contract — don't change host/port.
 // The dev server starts once `src/router.tsx` and `src/routes/` exist — see
 // AGENTS.md § "First scaffold".
 export default defineConfig(({ command, isPreview }) => ({
+  base: pagesBase ? `${pagesBase}/` : "/",
   server: {
     host: "0.0.0.0",
     port: 8080,
@@ -170,11 +177,18 @@ export default defineConfig(({ command, isPreview }) => ({
     ...(command === "build" || isPreview
       ? [
           nitro({
-            preset: "vercel",
+            // GitHub Pages: static prerender; Vercel: server functions.
+            preset: isPages ? "github-pages" : "vercel",
             // Auto-registers server/middleware/* (the PWA install page +
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
-            serverDir: "./server",
+            // GitHub Pages has no server at runtime, so the middleware (which
+            // imports Vite-only `?raw` and `virtual:` modules the static
+            // prerender bundler cannot resolve) is skipped there — the
+            // prerendered pages already carry the content and meta tags.
+            serverDir: isPages ? false : "./server",
+            // Pages serves under /<repo>/ — the prerendered app must know it.
+            ...(isPages ? { baseURL: `${pagesBase}/` } : {}),
           }),
         ]
       : []),

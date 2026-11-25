@@ -5,6 +5,10 @@ import appCss from "../styles.css?url";
 
 const APP_NAME = "Zéro à Héros Oracle";
 
+// Static-asset links must stay under the deploy base path (GitHub Pages
+// project site lives under /<repo>/); at the root the prefix is empty.
+const BASE = import.meta.env.VITE_BASE_PATH ?? "";
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -19,10 +23,10 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#f3eee4" },
     ],
     links: [
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", type: "image/svg+xml", href: `${BASE}/favicon.svg` },
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
+      { rel: "manifest", href: `${BASE}/__grok/manifest.webmanifest` },
+      { rel: "apple-touch-icon", href: `${BASE}/__grok/icon-180.png` },
     ],
   }),
   component: () => (
