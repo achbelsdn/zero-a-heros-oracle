@@ -1,0 +1,1 @@
+import{d as e}from"./createLucideIcon-DGh7nqS1.js";import{t}from"./exam-view-CEWnk8Ge.js";import{n}from"./index-DWh7CFb_.js";var r=e();function i(){let{examId:e}=n.useParams();return(0,r.jsx)(t,{examId:e})}export{i as component};

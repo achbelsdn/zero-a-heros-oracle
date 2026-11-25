@@ -1,0 +1,523 @@
+<!DOCTYPE html><html lang="fr"><head><meta name="twitter:card" content="summary_large_image"><meta property="og:title" content="Zéro à Héros Oracle"><meta property="og:description" content="Révisions SQL et PL/SQL pour l&#39;examen d&#39;administration des bases de données — ENEAM L3."><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/zero-a-heros-oracle/assets/styles-CtY5cr_H.css" data-precedence="default"/><title>Zéro à Héros Oracle</title><meta name="description" content="Parcours pas à pas et examens blancs corrigés pour l&#x27;UE Administration des bases de données Oracle, L3 AIP et ARI."/><meta name="theme-color" content="#f3eee4"/><link rel="modulepreload" href="/zero-a-heros-oracle/assets/index-DWh7CFb_.js"/><link rel="modulepreload" href="/zero-a-heros-oracle/assets/createLucideIcon-DGh7nqS1.js"/><link rel="modulepreload" href="/zero-a-heros-oracle/assets/preload-helper-DbkgD1Je.js"/><link rel="modulepreload" href="/zero-a-heros-oracle/assets/tp-BeRz4b6r.js"/><link rel="modulepreload" href="/zero-a-heros-oracle/assets/shell-D6cGu7mX.js"/><link rel="modulepreload" href="/zero-a-heros-oracle/assets/rich-DRB7Amwo.js"/><link rel="icon" type="image/svg+xml" href="/zero-a-heros-oracle/favicon.svg"/><link rel="manifest" href="/zero-a-heros-oracle/__grok/manifest.webmanifest"/><link rel="apple-touch-icon" href="/zero-a-heros-oracle/__grok/icon-180.png"/><link rel="manifest" href="/__grok/manifest.webmanifest"><link rel="apple-touch-icon" href="/__grok/icon-180.png"><meta name="apple-mobile-web-app-title" content="Zéro à Héros Oracle"><meta name="apple-mobile-web-app-status-bar-style" content="black"><script src="https://grok.com/grok-app-builder/extensions.js" defer></script></head><body><!--$--><div class="min-h-screen bg-paper text-ink"><header class="sticky top-0 z-30 border-b border-line bg-paper/95 backdrop-blur"><div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6"><a class="group flex min-h-11 items-center gap-2.5" href="/zero-a-heros-oracle/"><span class="flex size-9 items-center justify-center rounded-lg bg-ink font-display text-lg text-sheet">O</span><span class="hidden leading-tight sm:block"><span class="block font-display text-lg text-ink">Zéro à héros</span><span class="block text-xs tracking-wide text-muted uppercase">Oracle · L3</span></span></a><nav class="flex min-w-0 items-center gap-1 overflow-x-auto"><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-2 text-sm font-semibold sm:px-4 text-ink hover:bg-sheet" href="/zero-a-heros-oracle/parcours">Parcours</a><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-2 text-sm font-semibold sm:px-4 text-ink hover:bg-sheet" href="/zero-a-heros-oracle/examens">Examens</a><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-2 text-sm font-semibold sm:px-4 bg-ink text-sheet active" href="/zero-a-heros-oracle/tp" data-status="active" aria-current="page">TP</a><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-2 text-sm font-semibold sm:px-4 text-ink hover:bg-sheet" href="/zero-a-heros-oracle/fiches">Fiches</a></nav></div></header><main class="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8"><p class="text-sm font-semibold tracking-[0.16em] text-copper uppercase">Sujet de TP · 5 pages</p><h1 class="mt-2 max-w-3xl font-display text-4xl text-ink sm:text-5xl">Triggers, fonctions et procédures</h1><p class="mt-3 max-w-2xl text-lg text-muted">Corrigé complet, gardé dans l’application. Les codes -2020 et -2021 du sujet sont hors plage : Oracle n’accepte que -20000 à -20999, donc -20020 et -20021.</p><div class="mt-5 flex flex-wrap gap-3"><button type="button" class="inline-flex min-h-11 items-center gap-2 rounded-full bg-teal px-5 font-semibold text-sheet hover:bg-teal-deep"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-4" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier tout le script</button><button type="button" class="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-sheet px-5 font-semibold text-ink"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download size-4" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>Télécharger le .sql</button></div><section class="mt-8 rounded-3xl border border-line bg-sheet p-5"><h2 class="font-display text-2xl text-ink">À adapter avant d’exécuter</h2><p class="mt-2 text-muted">La base de classe existe déjà. Si DESCRIBE montre d’autres noms, remplace-les dans le script. Le prix d’une ligne est lu dans produits.prix.</p><div class="mt-4 overflow-x-auto"><table class="w-full min-w-[32rem] text-left text-sm"><thead><tr class="border-b border-line text-muted"><th class="py-2 pr-4 font-semibold">Table</th><th class="py-2 font-semibold">Colonnes supposées</th></tr></thead><tbody><tr class="border-b border-line last:border-0"><td class="py-2 pr-4 font-mono text-teal-deep">clients</td><td class="py-2 text-ink">id, nom, email, date_inscription</td></tr><tr class="border-b border-line last:border-0"><td class="py-2 pr-4 font-mono text-teal-deep">commandes</td><td class="py-2 text-ink">id, client_id, date_commande, montant</td></tr><tr class="border-b border-line last:border-0"><td class="py-2 pr-4 font-mono text-teal-deep">categories</td><td class="py-2 text-ink">id, nom</td></tr><tr class="border-b border-line last:border-0"><td class="py-2 pr-4 font-mono text-teal-deep">produits</td><td class="py-2 text-ink">id, nom, prix, categorie_id + stock</td></tr><tr class="border-b border-line last:border-0"><td class="py-2 pr-4 font-mono text-teal-deep">commande_produits</td><td class="py-2 text-ink">commande_id, produit_id, quantite</td></tr></tbody></table></div></section><section class="mt-8"><h2 class="font-display text-2xl text-ink">Réponses qui ne sont pas du code</h2><ul class="mt-3 flex flex-col gap-3"><li class="rounded-2xl border border-line bg-sheet px-4 py-3"><p class="text-xs font-semibold tracking-wide text-copper uppercase">Question <!-- -->1.2</p><p class="mt-1 text-ink">Le message sort dans DBMS Output. Sans SET SERVEROUTPUT ON, le bloc réussit mais rien ne s’affiche.</p></li><li class="rounded-2xl border border-line bg-sheet px-4 py-3"><p class="text-xs font-semibold tracking-wide text-copper uppercase">Question <!-- -->2.2 b</p><p class="mt-1 text-ink">Sans EXCEPTION : ORA-01403 (no data found). SELECT INTO exige exactement une ligne.</p></li><li class="rounded-2xl border border-line bg-sheet px-4 py-3"><p class="text-xs font-semibold tracking-wide text-copper uppercase">Question <!-- -->3.3</p><p class="mt-1 text-ink">Sans NVL, le client 99999 renverrait NULL. SUM sur zéro ligne ne vaut pas 0.</p></li><li class="rounded-2xl border border-line bg-sheet px-4 py-3"><p class="text-xs font-semibold tracking-wide text-copper uppercase">Question <!-- -->4.2</p><p class="mt-1 text-ink">Pas de COMMIT dans la procédure : l’appelant valide. Le script se termine par COMMIT, ce qui rend les essais définitifs.</p></li><li class="rounded-2xl border border-line bg-sheet px-4 py-3"><p class="text-xs font-semibold tracking-wide text-copper uppercase">Question <!-- -->5.2</p><p class="mt-1 text-ink">a et b échouent (ORA-20030). c réussit : UPDATE stock ne met pas prix dans le SET, donc UPDATE OF prix ne part pas.</p></li><li class="rounded-2xl border border-line bg-sheet px-4 py-3"><p class="text-xs font-semibold tracking-wide text-copper uppercase">Question <!-- -->5.4</p><p class="mt-1 text-ink">Avec le trigger : ORA-20032. Sans lui : ORA-02292, la clé étrangère (child record found).</p></li></ul></section><nav class="mt-8 flex gap-2 overflow-x-auto pb-1"><a href="#s0" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">Consignes et schéma</a><a href="#s1" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">PARTIE 1 — Preparation</a><a href="#s2" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">1.1</a><a href="#s3" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">1.2</a><a href="#s4" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">PARTIE 2 — Blocs anonymes</a><a href="#s5" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">2.1</a><a href="#s6" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">2.2 a — produit 3, variables en %TYPE</a><a href="#s7" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">2.2 b — produit 99999 : d&#x27;abord sans exception (ORA-01403),</a><a href="#s8" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">2.3 — du moins cher au plus cher</a><a href="#s9" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">2.4 — CA par boucle, puis verification SQL</a><a href="#s10" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">PARTIE 3 — Fonctions stockees</a><a href="#s11" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">3.1 — TVA 18 %, arrondi a l&#x27;unite</a><a href="#s12" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">3.2</a><a href="#s13" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">3.3 — 0 s&#x27;il n&#x27;y a aucune commande (sinon SUM renverrait NULL)</a><a href="#s14" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">3.4 — reutilise fn_total_client</a><a href="#s15" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">3.5</a><a href="#s16" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">PARTIE 4 — Procedures stockees</a><a href="#s17" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">4.1 — quatre lignes, erreur -20020 si client absent</a><a href="#s18" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">4.2 — prochain id = MAX + 1, date du jour sans l&#x27;heure, pas de COMMIT</a><a href="#s19" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">4.3</a><a href="#s20" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">4.4</a><a href="#s21" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">4.5 — une ligne par mois de l&#x27;annee qui a des commandes</a><a href="#s22" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">PARTIE 5 — Triggers</a><a href="#s23" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">5.1 — AFTER, :OLD seulement au DELETE</a><a href="#s24" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">5.2 — seulement a l&#x27;INSERT et a l&#x27;UPDATE de prix</a><a href="#s25" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">5.3 — BEFORE INSERT sur la ligne : controle puis decrement</a><a href="#s26" class="inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-sheet px-3 text-sm font-semibold text-ink">5.4 — refuse la suppression si fn_nb_commandes &gt;= 1</a></nav><div class="mt-4 flex flex-col gap-4"><section id="s0" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>Consignes et schéma</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- =============================================================================
+-- TP Oracle PL/SQL : triggers, fonctions et procedures stockees
+-- Script complet (parties 1 a 5) + tests
+--
+-- A executer dans SQL*Plus, SQLcl ou SQL Developer (Run Script / F5).
+-- SET SERVEROUTPUT ON est obligatoire pour voir DBMS_OUTPUT.
+--
+-- -----------------------------------------------------------------------------
+-- SCHEMA SUPPOSE (base deja presente en classe). Adapter les noms si DESCRIBE
+-- montre autre chose, puis relancer le script.
+--
+--   clients           (id, nom, email, date_inscription)
+--   commandes         (id, client_id, date_commande, montant)
+--   categories        (id, nom)
+--   produits          (id, nom, prix, categorie_id)   -- stock ajoute en 1.1
+--   commande_produits (commande_id, produit_id, quantite)
+--
+-- Le prix d&#x27;une ligne est pris dans produits.prix.
+-- Si commande_produits a sa propre colonne prix, remplacer p.prix par cp.prix
+-- dans sp_recalculer_montant.
+--
+-- Codes d&#x27;erreur : le sujet ecrit « -2020 » et « -2021 » aux questions 4.1
+-- et 4.3, mais 4.4 ecrit « -20020 » pour le meme message, et le rappel de
+-- cours impose un code entre -20000 et -20999. -2020 ferait ORA-21000.
+-- Ce script utilise donc -20020 et -20021.
+--
+-- details du journal : la question 1.1 demande VARCHAR2(200). La page 1
+-- note « details sera de type CLOB » : decommenter la variante si besoin.
+-- =============================================================================
+
+SET SERVEROUTPUT ON
+
+-- =============================================================================
+-- REPONSES COURTES (questions qui ne sont pas seulement du code)
+-- =============================================================================
+-- Q1.2  Le message s&#x27;affiche dans la sortie du script (panneau DBMS Output
+--       de SQL Developer, ou la console SQL*Plus / SQLcl).
+--       Sans SET SERVEROUTPUT ON, le bloc s&#x27;execute quand meme
+--       (« PL/SQL procedure successfully completed ») mais PUT_LINE reste
+--       dans le tampon : rien n&#x27;est affiche.
+--
+-- Q2.2b Sans EXCEPTION, Oracle leve ORA-01403 : no data found
+--       (aucune donnee trouvee), car SELECT INTO exige exactement une ligne.
+--
+-- Q3.3  Sans NVL, le client 99999 (aucune commande) donnerait NULL :
+--       SUM sur un ensemble vide retourne NULL, pas 0.
+--
+-- Q4.2  Pas de COMMIT dans la procedure : c&#x27;est l&#x27;appelant qui valide ou
+--       annule la transaction. Un COMMIT interne rendrait l&#x27;INSERT definitif
+--       meme si la suite echoue, et une procedure appelee depuis un trigger
+--       n&#x27;a pas le droit de valider (ORA-04092).
+--
+-- Q5.2  a) echoue : ORA-20030, le prix passe a -5, la colonne prix est dans
+--          le SET, le trigger BEFORE UPDATE OF prix se declenche.
+--       b) echoue : ORA-20030, INSERT avec prix 0, le trigger BEFORE INSERT
+--          se declenche aussi.
+--       c) reussit : UPDATE stock ne met pas prix dans le SET, donc
+--          UPDATE OF prix ne se declenche pas.
+--
+-- Q5.4  Avec le trigger : ORA-20032 (regle metier, avant l&#x27;ecriture).
+--       Sans le trigger : ORA-02292 integrity constraint ... violated -
+--       child record found (cle etrangere commandes -&gt; clients).
+--       Le trigger remplace le message technique Oracle par un refus explicite.
+-- =============================================================================
+
+
+-- =============================================================================</code></pre></div></figure></section><section id="s1" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>PARTIE 1 — Preparation</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- PARTIE 1 — Preparation
+-- =============================================================================</code></pre></div></figure></section><section id="s2" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>1.1</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 1.1
+ALTER TABLE produits ADD stock NUMBER DEFAULT 0;
+
+UPDATE produits SET stock = 100;
+COMMIT;
+
+CREATE TABLE journal (
+    id          NUMBER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    table_nom   VARCHAR2(30),
+    operation   VARCHAR2(10),
+    ligne_id    NUMBER,
+    utilisateur VARCHAR2(50),
+    date_op     DATE DEFAULT SYSDATE,
+    details     VARCHAR2(200)
+    -- details  CLOB   -- variante indiquee en page 1
+);</code></pre></div></figure></section><section id="s3" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>1.2</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 1.2
+SET SERVEROUTPUT ON
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(&#x27;Bonjour, nous sommes le &#x27;
+                         || TO_CHAR(SYSDATE, &#x27;DD/MM/YYYY&#x27;));
+END;
+/
+
+
+-- =============================================================================</code></pre></div></figure></section><section id="s4" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>PARTIE 2 — Blocs anonymes</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- PARTIE 2 — Blocs anonymes
+-- =============================================================================</code></pre></div></figure></section><section id="s5" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>2.1</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 2.1
+DECLARE
+    v_nb NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_nb FROM clients;
+    DBMS_OUTPUT.PUT_LINE(&#x27;Nombre de clients : &#x27; || v_nb);
+END;
+/</code></pre></div></figure></section><section id="s6" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>2.2 a — produit 3, variables en %TYPE</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 2.2 a — produit 3, variables en %TYPE
+DECLARE
+    v_nom  produits.nom%TYPE;
+    v_prix produits.prix%TYPE;
+BEGIN
+    SELECT nom, prix INTO v_nom, v_prix
+    FROM produits
+    WHERE id = 3;
+
+    DBMS_OUTPUT.PUT_LINE(v_nom || &#x27; : &#x27; || v_prix);
+END;
+/</code></pre></div></figure></section><section id="s7" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>2.2 b — produit 99999 : d&#x27;abord sans exception (ORA-01403),</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 2.2 b — produit 99999 : d&#x27;abord sans exception (ORA-01403),
+-- puis avec EXCEPTION.
+DECLARE
+    v_nom  produits.nom%TYPE;
+    v_prix produits.prix%TYPE;
+BEGIN
+    SELECT nom, prix INTO v_nom, v_prix
+    FROM produits
+    WHERE id = 99999;
+
+    DBMS_OUTPUT.PUT_LINE(v_nom || &#x27; : &#x27; || v_prix);
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE(&#x27;Produit introuvable&#x27;);
+END;
+/</code></pre></div></figure></section><section id="s8" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>2.3 — du moins cher au plus cher</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 2.3 — du moins cher au plus cher
+DECLARE
+    v_niveau VARCHAR2(20);
+BEGIN
+    FOR r IN (SELECT nom, prix FROM produits ORDER BY prix) LOOP
+        IF r.prix &lt; 5000 THEN
+            v_niveau := &#x27;Economique&#x27;;
+        ELSIF r.prix &lt; 50000 THEN
+            v_niveau := &#x27;Standard&#x27;;
+        ELSE
+            v_niveau := &#x27;Premium&#x27;;
+        END IF;
+
+        DBMS_OUTPUT.PUT_LINE(r.nom || &#x27; : &#x27; || v_niveau);
+    END LOOP;
+END;
+/</code></pre></div></figure></section><section id="s9" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>2.4 — CA par boucle, puis verification SQL</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 2.4 — CA par boucle, puis verification SQL
+DECLARE
+    v_ca NUMBER := 0;
+BEGIN
+    FOR r IN (SELECT montant FROM commandes) LOOP
+        v_ca := v_ca + NVL(r.montant, 0);
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE(&#x27;Chiffre d&#x27;&#x27;affaires total : &#x27; || v_ca);
+END;
+/
+
+SELECT SUM(montant) AS ca_verification FROM commandes;
+
+
+-- =============================================================================</code></pre></div></figure></section><section id="s10" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>PARTIE 3 — Fonctions stockees</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- PARTIE 3 — Fonctions stockees
+-- =============================================================================</code></pre></div></figure></section><section id="s11" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>3.1 — TVA 18 %, arrondi a l&#x27;unite</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 3.1 — TVA 18 %, arrondi a l&#x27;unite
+CREATE OR REPLACE FUNCTION fn_prix_ttc(p_prix IN NUMBER)
+RETURN NUMBER IS
+BEGIN
+    RETURN ROUND(p_prix * 1.18);
+END fn_prix_ttc;
+/
+SHOW ERRORS
+
+SELECT id, nom, prix, fn_prix_ttc(prix) AS prix_ttc
+FROM produits;</code></pre></div></figure></section><section id="s12" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>3.2</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 3.2
+CREATE OR REPLACE FUNCTION fn_nb_commandes(p_client_id IN NUMBER)
+RETURN NUMBER IS
+    v_nb NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_nb
+    FROM commandes
+    WHERE client_id = p_client_id;
+
+    RETURN v_nb;
+END fn_nb_commandes;
+/
+SHOW ERRORS
+
+SELECT id, nom, fn_nb_commandes(id) AS nb_commandes
+FROM clients;</code></pre></div></figure></section><section id="s13" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>3.3 — 0 s&#x27;il n&#x27;y a aucune commande (sinon SUM renverrait NULL)</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 3.3 — 0 s&#x27;il n&#x27;y a aucune commande (sinon SUM renverrait NULL)
+CREATE OR REPLACE FUNCTION fn_total_client(p_client_id IN NUMBER)
+RETURN NUMBER IS
+    v_total NUMBER;
+BEGIN
+    SELECT NVL(SUM(montant), 0) INTO v_total
+    FROM commandes
+    WHERE client_id = p_client_id;
+
+    RETURN v_total;
+END fn_total_client;
+/
+SHOW ERRORS
+
+SELECT id, nom, fn_total_client(id) AS total
+FROM clients;
+
+-- Demonstration : client inexistant -&gt; 0 (et NULL sans le NVL)
+SELECT fn_total_client(99999) AS total_99999 FROM dual;</code></pre></div></figure></section><section id="s14" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>3.4 — reutilise fn_total_client</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 3.4 — reutilise fn_total_client
+CREATE OR REPLACE FUNCTION fn_statut_client(p_client_id IN NUMBER)
+RETURN VARCHAR2 IS
+    v_total NUMBER;
+BEGIN
+    v_total := fn_total_client(p_client_id);
+
+    IF v_total &gt;= 150000 THEN
+        RETURN &#x27;VIP&#x27;;
+    ELSIF v_total &gt;= 50000 THEN
+        RETURN &#x27;Regulier&#x27;;
+    ELSE
+        RETURN &#x27;Occasionnel&#x27;;
+    END IF;
+END fn_statut_client;
+/
+SHOW ERRORS
+
+-- 3.4 a
+SELECT id,
+       nom,
+       fn_total_client(id)  AS total,
+       fn_statut_client(id) AS statut
+FROM clients;
+
+-- 3.4 b — fonction dans le WHERE
+SELECT id, nom, fn_total_client(id) AS total
+FROM clients
+WHERE fn_statut_client(id) = &#x27;VIP&#x27;;</code></pre></div></figure></section><section id="s15" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>3.5</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 3.5
+CREATE OR REPLACE FUNCTION fn_nom_categorie(p_produit_id IN NUMBER)
+RETURN VARCHAR2 IS
+    v_nom categories.nom%TYPE;
+BEGIN
+    SELECT c.nom INTO v_nom
+    FROM produits p
+    JOIN categories c ON c.id = p.categorie_id
+    WHERE p.id = p_produit_id;
+
+    RETURN v_nom;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN &#x27;Inconnu&#x27;;
+END fn_nom_categorie;
+/
+SHOW ERRORS
+
+SELECT fn_nom_categorie(3)     AS cat_3,
+       fn_nom_categorie(99999) AS cat_99999
+FROM dual;
+
+
+-- =============================================================================</code></pre></div></figure></section><section id="s16" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>PARTIE 4 — Procedures stockees</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- PARTIE 4 — Procedures stockees
+-- =============================================================================</code></pre></div></figure></section><section id="s17" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>4.1 — quatre lignes, erreur -20020 si client absent</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 4.1 — quatre lignes, erreur -20020 si client absent
+CREATE OR REPLACE PROCEDURE sp_afficher_client(p_id IN NUMBER) IS
+    v_nom   clients.nom%TYPE;
+    v_email clients.email%TYPE;
+BEGIN
+    SELECT nom, email INTO v_nom, v_email
+    FROM clients
+    WHERE id = p_id;
+
+    DBMS_OUTPUT.PUT_LINE(&#x27;Nom : &#x27; || v_nom || &#x27; | Email : &#x27; || v_email);
+    DBMS_OUTPUT.PUT_LINE(&#x27;Nombre de commandes : &#x27; || fn_nb_commandes(p_id));
+    DBMS_OUTPUT.PUT_LINE(&#x27;Total : &#x27; || fn_total_client(p_id));
+    DBMS_OUTPUT.PUT_LINE(&#x27;Statut : &#x27; || fn_statut_client(p_id));
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20020, &#x27;Client inconnu&#x27;);
+END sp_afficher_client;
+/
+SHOW ERRORS
+
+PROMPT ===== Test 4.1 client 1 (attendu : 4 lignes) =====
+EXEC sp_afficher_client(1);
+
+PROMPT ===== Test 4.1 client 99 (attendu : ORA-20020 Client inconnu) =====
+EXEC sp_afficher_client(99);</code></pre></div></figure></section><section id="s18" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>4.2 — prochain id = MAX + 1, date du jour sans l&#x27;heure, pas de COMMIT</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 4.2 — prochain id = MAX + 1, date du jour sans l&#x27;heure, pas de COMMIT
+CREATE OR REPLACE PROCEDURE sp_ajouter_client(
+    p_nom   IN  VARCHAR2,
+    p_email IN  VARCHAR2,
+    p_id    OUT NUMBER
+) IS
+BEGIN
+    SELECT NVL(MAX(id), 0) + 1 INTO p_id FROM clients;
+
+    INSERT INTO clients (id, nom, email, date_inscription)
+    VALUES (p_id, p_nom, p_email, TRUNC(SYSDATE));
+END sp_ajouter_client;
+/
+SHOW ERRORS
+
+PROMPT ===== Test 4.2 : noter l&#x27;&#x27;identifiant affiche =====
+DECLARE
+    v_id NUMBER;
+BEGIN
+    sp_ajouter_client(&#x27;Client TP&#x27;, &#x27;client.tp@example.com&#x27;, v_id);
+    DBMS_OUTPUT.PUT_LINE(&#x27;Identifiant retourne : &#x27; || v_id);
+END;
+/</code></pre></div></figure></section><section id="s19" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>4.3</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 4.3
+CREATE OR REPLACE PROCEDURE sp_recalculer_montant(p_commande_id IN NUMBER) IS
+    v_existe  NUMBER;
+    v_montant NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_existe
+    FROM commandes
+    WHERE id = p_commande_id;
+
+    IF v_existe = 0 THEN
+        RAISE_APPLICATION_ERROR(-20021, &#x27;Commande inconnue&#x27;);
+    END IF;
+
+    SELECT NVL(SUM(p.prix * cp.quantite), 0) INTO v_montant
+    FROM commande_produits cp
+    JOIN produits p ON p.id = cp.produit_id
+    WHERE cp.commande_id = p_commande_id;
+
+    UPDATE commandes
+    SET montant = v_montant
+    WHERE id = p_commande_id;
+END sp_recalculer_montant;
+/
+SHOW ERRORS
+
+PROMPT ===== Test 4.3 commande 1 =====
+UPDATE commandes SET montant = 0 WHERE id = 1;
+EXEC sp_recalculer_montant(1);
+SELECT id, montant FROM commandes WHERE id = 1;
+
+PROMPT ===== Test 4.3 commande 999 (attendu : ORA-20021) =====
+EXEC sp_recalculer_montant(999);</code></pre></div></figure></section><section id="s20" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>4.4</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 4.4
+CREATE OR REPLACE PROCEDURE sp_passer_commande(
+    p_client_id    IN  NUMBER,
+    p_produit_id   IN  NUMBER,
+    p_quantite     IN  NUMBER,
+    p_commande_id  OUT NUMBER
+) IS
+    v_existe NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_existe
+    FROM clients
+    WHERE id = p_client_id;
+
+    IF v_existe = 0 THEN
+        RAISE_APPLICATION_ERROR(-20020, &#x27;Client inconnu&#x27;);
+    END IF;
+
+    SELECT NVL(MAX(id), 0) + 1 INTO p_commande_id FROM commandes;
+
+    INSERT INTO commandes (id, client_id, date_commande, montant)
+    VALUES (p_commande_id, p_client_id, SYSDATE, 0);
+
+    INSERT INTO commande_produits (commande_id, produit_id, quantite)
+    VALUES (p_commande_id, p_produit_id, p_quantite);
+
+    sp_recalculer_montant(p_commande_id);
+END sp_passer_commande;
+/
+SHOW ERRORS
+
+PROMPT ===== Test 4.4 : client 2 commande 2 exemplaires du produit 1 =====
+DECLARE
+    v_id      NUMBER;
+    v_montant commandes.montant%TYPE;
+BEGIN
+    sp_passer_commande(2, 1, 2, v_id);
+
+    SELECT montant INTO v_montant
+    FROM commandes
+    WHERE id = v_id;
+
+    DBMS_OUTPUT.PUT_LINE(&#x27;Commande creee : id = &#x27; || v_id
+                         || &#x27;, montant = &#x27; || v_montant);
+END;
+/</code></pre></div></figure></section><section id="s21" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>4.5 — une ligne par mois de l&#x27;annee qui a des commandes</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 4.5 — une ligne par mois de l&#x27;annee qui a des commandes
+CREATE OR REPLACE PROCEDURE sp_rapport_mensuel(p_annee IN NUMBER) IS
+BEGIN
+    FOR r IN (
+        SELECT TO_CHAR(date_commande, &#x27;MM&#x27;) AS mois,
+               COUNT(*)                     AS nb,
+               NVL(SUM(montant), 0)         AS ca
+        FROM commandes
+        WHERE EXTRACT(YEAR FROM date_commande) = p_annee
+        GROUP BY TO_CHAR(date_commande, &#x27;MM&#x27;)
+        ORDER BY TO_CHAR(date_commande, &#x27;MM&#x27;)
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE(&#x27;Mois &#x27; || r.mois || &#x27; : &#x27; || r.nb
+                             || &#x27; commande(s), CA = &#x27; || r.ca);
+    END LOOP;
+END sp_rapport_mensuel;
+/
+SHOW ERRORS
+
+PROMPT ===== Test 4.5 annee 2025 =====
+EXEC sp_rapport_mensuel(2025);
+
+
+-- =============================================================================</code></pre></div></figure></section><section id="s22" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>PARTIE 5 — Triggers</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- PARTIE 5 — Triggers
+-- =============================================================================</code></pre></div></figure></section><section id="s23" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>5.1 — AFTER, :OLD seulement au DELETE</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 5.1 — AFTER, :OLD seulement au DELETE
+CREATE OR REPLACE TRIGGER trg_clients_journal
+AFTER INSERT OR UPDATE OR DELETE ON clients
+FOR EACH ROW
+DECLARE
+    v_operation journal.operation%TYPE;
+    v_ligne_id  journal.ligne_id%TYPE;
+BEGIN
+    IF INSERTING THEN
+        v_operation := &#x27;INSERT&#x27;;
+        v_ligne_id  := :NEW.id;
+    ELSIF UPDATING THEN
+        v_operation := &#x27;UPDATE&#x27;;
+        v_ligne_id  := :NEW.id;
+    ELSIF DELETING THEN
+        v_operation := &#x27;DELETE&#x27;;
+        v_ligne_id  := :OLD.id;
+    END IF;
+
+    INSERT INTO journal (table_nom, operation, ligne_id, utilisateur)
+    VALUES (&#x27;CLIENTS&#x27;, v_operation, v_ligne_id, USER);
+END trg_clients_journal;
+/
+SHOW ERRORS
+
+PROMPT ===== Test 5.1 client 20 (id libre ; sinon changer 20) =====
+INSERT INTO clients (id, nom, email, date_inscription)
+VALUES (20, &#x27;Client Vingt&#x27;, &#x27;vingt@example.com&#x27;, TRUNC(SYSDATE));
+
+UPDATE clients
+SET email = &#x27;vingt.modifie@example.com&#x27;
+WHERE id = 20;
+
+DELETE FROM clients WHERE id = 20;
+
+SELECT id, table_nom, operation, ligne_id, utilisateur, date_op
+FROM journal
+ORDER BY id;</code></pre></div></figure></section><section id="s24" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>5.2 — seulement a l&#x27;INSERT et a l&#x27;UPDATE de prix</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 5.2 — seulement a l&#x27;INSERT et a l&#x27;UPDATE de prix
+CREATE OR REPLACE TRIGGER trg_produits_prix
+BEFORE INSERT OR UPDATE OF prix ON produits
+FOR EACH ROW
+BEGIN
+    IF :NEW.prix IS NULL OR :NEW.prix &lt;= 0 THEN
+        RAISE_APPLICATION_ERROR(-20030, &#x27;Prix invalide&#x27;);
+    END IF;
+END trg_produits_prix;
+/
+SHOW ERRORS
+
+PROMPT ===== Test 5.2 a (attendu : ORA-20030) =====
+UPDATE produits SET prix = -5 WHERE id = 1;
+
+PROMPT ===== Test 5.2 b (attendu : ORA-20030) =====
+INSERT INTO produits (id, nom, prix, categorie_id)
+SELECT NVL(MAX(id), 0) + 1, &#x27;Produit prix zero&#x27;, 0,
+       (SELECT MIN(id) FROM categories)
+FROM produits;
+
+PROMPT ===== Test 5.2 c (attendu : succes, le trigger ne part pas) =====
+UPDATE produits SET stock = 100 WHERE id = 1;
+SELECT id, prix, stock FROM produits WHERE id = 1;</code></pre></div></figure></section><section id="s25" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>5.3 — BEFORE INSERT sur la ligne : controle puis decrement</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 5.3 — BEFORE INSERT sur la ligne : controle puis decrement
+CREATE OR REPLACE TRIGGER trg_lignes_stock
+BEFORE INSERT ON commande_produits
+FOR EACH ROW
+DECLARE
+    v_stock produits.stock%TYPE;
+BEGIN
+    SELECT stock INTO v_stock
+    FROM produits
+    WHERE id = :NEW.produit_id
+    FOR UPDATE;
+
+    IF NVL(v_stock, 0) &lt; :NEW.quantite THEN
+        RAISE_APPLICATION_ERROR(-20031, &#x27;Stock insuffisant&#x27;);
+    END IF;
+
+    UPDATE produits
+    SET stock = stock - :NEW.quantite
+    WHERE id = :NEW.produit_id;
+END trg_lignes_stock;
+/
+SHOW ERRORS
+
+PROMPT ===== Test 5.3 sur la commande creee en 4.4 (MAX id) =====
+-- a) 3 exemplaires du produit 2 : doit passer, stock 2 = 97 (100 - 3)
+INSERT INTO commande_produits (commande_id, produit_id, quantite)
+VALUES ((SELECT MAX(id) FROM commandes), 2, 3);
+
+SELECT id, nom, stock FROM produits WHERE id IN (2, 4);
+
+-- b) 500 exemplaires du produit 4 : ORA-20031, stock 4 inchange
+INSERT INTO commande_produits (commande_id, produit_id, quantite)
+VALUES ((SELECT MAX(id) FROM commandes), 4, 500);
+
+SELECT id, nom, stock FROM produits WHERE id IN (2, 4);
+
+-- Le test 4.4 a ete joue avant la creation de ce trigger :
+-- le stock du produit 1 n&#x27;a donc pas encore ete decremente.
+-- Seul le produit 2 l&#x27;est ici (100 - 3). Le produit 4 reste a 100.</code></pre></div></figure></section><section id="s26" class="scroll-mt-24"><figure class="overflow-hidden rounded-2xl border border-line"><figcaption class="flex items-center justify-between gap-3 border-b border-line bg-sheet px-4 py-2 text-sm font-semibold text-ink"><span>5.4 — refuse la suppression si fn_nb_commandes &gt;= 1</span><button type="button" class="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-teal-deep hover:bg-mist"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy size-3.5" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>Copier</button></figcaption><div class="relative"><pre class="overflow-x-auto p-4 font-mono text-sm leading-relaxed bg-ink text-sheet "><code>-- Question 5.4 — refuse la suppression si fn_nb_commandes &gt;= 1
+CREATE OR REPLACE TRIGGER trg_clients_suppression
+BEFORE DELETE ON clients
+FOR EACH ROW
+BEGIN
+    IF fn_nb_commandes(:OLD.id) &gt;= 1 THEN
+        RAISE_APPLICATION_ERROR(-20032,
+            &#x27;Suppression interdite : le client a des commandes&#x27;);
+    END IF;
+END trg_clients_suppression;
+/
+SHOW ERRORS
+
+PROMPT ===== Test 5.4 client 1 (attendu : ORA-20032, pas ORA-02292) =====
+DELETE FROM clients WHERE id = 1;
+
+PROMPT ===== Test 5.4 client cree en 4.2 (aucune commande : suppression OK) =====
+DELETE FROM clients
+WHERE id = (
+    SELECT MAX(id) FROM clients c
+    WHERE NOT EXISTS (
+        SELECT 1 FROM commandes k WHERE k.client_id = c.id
+    )
+);
+
+-- L&#x27;appelant rend la transaction permanente. Les procedures ne le font pas.
+COMMIT;</code></pre></div></figure></section></div></main></div><!--/$--><script data-tsr-stream-part="">(self.$R=self.$R||{})["tsr"]=[];self.$_TSR={h(){this.hydrated=!0,this.c()},e(){this.streamEnded=!0,this.c()},c(){this.hydrated&&this.streamEnded&&(delete self.$_TSR,delete self.$R.tsr)},p(e){this.initialized?e():this.buffer.push(e)},buffer:[]};$_TSR.router=($R=>$R[0]={manifest:$R[1]={routes:$R[2]={__root__:$R[3]={preloads:$R[4]=["/zero-a-heros-oracle/assets/index-DWh7CFb_.js","/zero-a-heros-oracle/assets/createLucideIcon-DGh7nqS1.js","/zero-a-heros-oracle/assets/preload-helper-DbkgD1Je.js"],scripts:$R[5]=[$R[6]={attrs:$R[7]={type:"module",async:!0,src:"/zero-a-heros-oracle/assets/index-DWh7CFb_.js"}}]},"/tp":$R[8]={preloads:$R[9]=["/zero-a-heros-oracle/assets/tp-BeRz4b6r.js","/zero-a-heros-oracle/assets/shell-D6cGu7mX.js","/zero-a-heros-oracle/assets/rich-DRB7Amwo.js"]}}},matches:$R[10]=[$R[11]={i:"__root__ ",u:1795621115996,s:"success",ssr:!0},$R[12]={i:" tp tp",u:1795621115996,s:"success",ssr:!0}]})($R["tsr"]);$_TSR.e();{let s=document.currentScript,p;while((p=s.previousElementSibling)&&p.hasAttribute('data-tsr-stream-part'))p.remove();s.remove()}</script><script type="module" async="" src="/zero-a-heros-oracle/assets/index-DWh7CFb_.js"></script><script>document.currentScript.remove();/*$tsr-stream-boundary*/</script></body></html>

@@ -1,0 +1,1 @@
+import{d as e}from"./createLucideIcon-DGh7nqS1.js";import{t}from"./lesson-view-Qiunt_OT.js";import{t as n}from"./index-DWh7CFb_.js";var r=e();function i(){let{lessonId:e}=n.useParams();return(0,r.jsx)(t,{lessonId:e})}export{i as component};
